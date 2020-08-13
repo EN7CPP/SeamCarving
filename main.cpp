@@ -21,9 +21,13 @@ void energy_function(Mat &image, Mat &output){
 
 
 int* find_seam(Mat &image){
-    int H = image.rows, W = image.cols;
+	int H = image.rows,int W = image.cols;
 
-    int dp[H][W];
+	int ** dp = new int*[H];
+	for (int i = 0; i < H; i++) {
+		dp[i] = new int[W];
+	}
+
     for(int c = 0; c < W; c++){
         dp[0][c] = (int)image.at<uchar>(0,c);
     }
@@ -48,7 +52,9 @@ int* find_seam(Mat &image){
             min_index = c;
         }
 
-    int path[H];
+   
+	int* path = new int[H];
+
     Point pos(H-1,min_index);
     path[pos.x] = pos.y;
 
@@ -78,6 +84,11 @@ int* find_seam(Mat &image){
         path[pos.x] = pos.y;
     }
 
+	for (int i = 0; i < H; i++) {
+		delete[] dp[i];
+	}
+
+	delete[] dp;
     return path;
 }
 
@@ -114,7 +125,7 @@ void remove_seam(Mat& image, char orientation = 'v'){
     int H = image.rows, W = image.cols;
 
     Mat gray;
-    cvtColor(image, gray, CV_BGR2GRAY);
+    cvtColor(image, gray, cv::COLOR_BGR2GRAY);
 
     Mat eimage;
     energy_function(gray, eimage);
